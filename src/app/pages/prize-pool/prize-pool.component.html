@@ -1,0 +1,71 @@
+<section class="page-shell page-shell--content">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Draw and Rewards</p>
+      <h1 class="page-title">Monthly draw logic, prize pool distribution, and simulation controls.</h1>
+    </div>
+    <div class="topbar-actions">
+      <a class="dashboard-btn dashboard-btn--ghost" routerLink="/">Back Home</a>
+      <a class="dashboard-btn dashboard-btn--primary" routerLink="/admin">Open Admin Control</a>
+    </div>
+  </header>
+
+  <section class="content-grid">
+    <article class="dashboard-card dashboard-card--lg">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+          <p class="eyebrow">Draw Logic Options</p>
+          <h2 class="section-display section-display--sm">Random or algorithmic monthly execution.</h2>
+        </div>
+        <div class="segment-switch">
+          <button type="button" [class.active]="drawMode === 'Algorithmic'" (click)="drawMode = 'Algorithmic'">Algorithmic</button>
+          <button type="button" [class.active]="drawMode === 'Random'" (click)="drawMode = 'Random'">Random</button>
+        </div>
+      </div>
+
+      <div class="detail-pairs">
+        <div class="info-panel">
+          <span class="muted-label">Current mode</span>
+          <strong>{{ drawMode }}</strong>
+          <p *ngIf="drawMode === 'Algorithmic'">Weighted by the most or least frequent subscriber score patterns.</p>
+          <p *ngIf="drawMode === 'Random'">Lottery-style draw generation across eligible subscribers.</p>
+        </div>
+        <div class="info-panel">
+          <span class="muted-label">Simulation sample</span>
+          <strong>{{ simulationCount | number }}</strong>
+          <p>{{ estimatedPattern }}</p>
+        </div>
+      </div>
+
+      <button type="button" class="dashboard-btn dashboard-btn--outline mt-4" (click)="runPreview()">Run Simulation Preview</button>
+    </article>
+
+    <article class="dashboard-card dashboard-card--lg">
+      <p class="eyebrow">Operational Requirements</p>
+      <div class="phase-list">
+        <div class="phase-item"><span class="phase-dot"></span><span>Monthly cadence with admin-published results</span></div>
+        <div class="phase-item"><span class="phase-dot"></span><span>Pre-analysis and simulation before official publish</span></div>
+        <div class="phase-item"><span class="phase-dot"></span><span>5-match jackpot rolls over when unclaimed</span></div>
+        <div class="phase-item"><span class="phase-dot"></span><span>Prizes split equally across winners in the same tier</span></div>
+      </div>
+    </article>
+  </section>
+
+  <section class="dashboard-card dashboard-card--lg">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Prize Pool Logic</p>
+        <h2 class="section-display section-display--sm">Tier distribution enforced automatically.</h2>
+      </div>
+    </div>
+
+    <div class="tier-grid">
+      <article class="tier-card" *ngFor="let tier of prizeTiers">
+        <span class="pill-tag">{{ tier.match }}</span>
+        <h3>{{ tier.share }}%</h3>
+        <p>{{ tier.description }}</p>
+        <strong>{{ tier.rollover ? 'Jackpot rolls forward' : 'No rollover for this tier' }}</strong>
+      </article>
+    </div>
+  </section>
+</section>

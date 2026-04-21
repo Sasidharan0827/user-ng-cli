@@ -1,0 +1,36 @@
+<section class="page-shell page-shell--content">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Winner Verification</p>
+      <h1 class="page-title">Proof upload review, approval workflow, and payout state tracking.</h1>
+    </div>
+    <div class="topbar-actions">
+      <span class="pill-tag pill-tag--rose">{{ pendingCount }} pending</span>
+      <a class="dashboard-btn dashboard-btn--ghost" routerLink="/admin">Admin Panel</a>
+    </div>
+  </header>
+
+  <div class="winner-grid winner-grid--wide">
+    <article class="winner-card" *ngFor="let submission of submissions">
+      <div class="winner-card__art">{{ submission.name }}</div>
+      <div class="history-copy__title mt-3">{{ submission.name }}</div>
+      <div class="accent-copy">{{ submission.prize }}</div>
+      <p class="muted-copy mt-2">{{ submission.proof }}</p>
+      <div class="detail-pairs detail-pairs--compact">
+        <div>
+          <span class="muted-label">Submitted</span>
+          <strong>{{ submission.submittedAt }}</strong>
+        </div>
+        <div>
+          <span class="muted-label">State</span>
+          <strong>{{ submission.state }}</strong>
+        </div>
+      </div>
+      <div class="winner-card__actions winner-card__actions--stack">
+        <button type="button" class="dashboard-btn dashboard-btn--muted" (click)="setState(submission, 'Approved')">Approve</button>
+        <button type="button" class="dashboard-btn dashboard-btn--ghost" (click)="setState(submission, 'Rejected')">Reject</button>
+        <button type="button" class="dashboard-btn dashboard-btn--outline" (click)="setState(submission, 'Paid')">Mark Paid</button>
+      </div>
+    </article>
+  </div>
+</section>

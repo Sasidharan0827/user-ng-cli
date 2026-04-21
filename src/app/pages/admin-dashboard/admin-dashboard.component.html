@@ -1,0 +1,228 @@
+<div class="dashboard-shell dashboard-shell--admin">
+  <aside class="dashboard-sidebar">
+    <div>
+      <div class="brand brand--with-mark">
+        <span class="brand-mark">⚡</span>
+        <span>Digital Heroes</span>
+      </div>
+
+      <div class="profile-panel">
+        <div class="avatar-circle">VC</div>
+        <div>
+          <div class="profile-chip__title">System Control</div>
+          <div class="profile-chip__meta">Admin Level: Heroic</div>
+        </div>
+      </div>
+
+      <nav class="nav flex-column dashboard-nav">
+        <a
+          *ngFor="let item of navItems"
+          class="dashboard-nav__item"
+          [class.active]="item.label === 'Draw Status'"
+          [routerLink]="item.route"
+        >
+          <span class="dashboard-nav__icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-cta">
+      <a class="btn dashboard-btn dashboard-btn--primary w-100" routerLink="/dashboard">Open Subscriber View</a>
+      <div class="sidebar-links">
+        <a routerLink="/">Public Site</a>
+        <a routerLink="/winners">Winner Queue</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    <header class="dashboard-topbar">
+      <div>
+        <h1 class="dashboard-title dashboard-title--cyan">System Command</h1>
+        <div class="dashboard-subtitle">Draw Configuration & Management</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-box">
+          <span>⌕</span>
+          <input type="text" [(ngModel)]="filterTerm" placeholder="Search users, plan, or charity..." />
+        </div>
+        <span class="pill-tag">{{ drawStatus }}</span>
+      </div>
+    </header>
+
+    <section class="row g-4">
+      <div class="col-md-4">
+        <article class="dashboard-card metric-card" data-accent="cyan">
+          <div class="eyebrow">Total Prize Pool</div>
+          <div class="metric-card__value">$428,190</div>
+          <div class="metric-card__detail">Auto-calculated from active subscriptions</div>
+        </article>
+      </div>
+
+      <div class="col-md-4">
+        <article class="dashboard-card metric-card" data-accent="violet">
+          <div class="eyebrow">Charity Contributions</div>
+          <div class="metric-card__value">$84,022</div>
+          <div class="metric-card__detail">Minimum 10% contribution enforced</div>
+        </article>
+      </div>
+
+      <div class="col-md-4">
+        <article class="dashboard-card metric-card">
+          <div class="eyebrow">Active Subscribers</div>
+          <div class="metric-card__value">{{ activeUserCount }}</div>
+          <div class="metric-card__detail">Visible across reports and draw eligibility</div>
+        </article>
+      </div>
+
+      <div class="col-xl-7">
+        <article class="dashboard-card dashboard-card--lg">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div class="section-title">Draw Logic Configuration</div>
+            <div class="segment-switch">
+              <button
+                type="button"
+                [class.active]="algorithmMode === 'Algorithmic'"
+                (click)="algorithmMode = 'Algorithmic'"
+              >
+                Algorithmic
+              </button>
+              <button
+                type="button"
+                [class.active]="algorithmMode === 'Random'"
+                (click)="algorithmMode = 'Random'"
+              >
+                Random
+              </button>
+            </div>
+          </div>
+
+          <div class="row g-4 align-items-start">
+            <div class="col-lg-6">
+              <div class="muted-label">Simulation Sample Size</div>
+              <input
+                class="form-range dashboard-range"
+                type="range"
+                min="100"
+                max="10000"
+                [value]="sampleSize"
+                (input)="updateSampleSize($event)"
+              />
+              <div class="range-scale">
+                <span>100</span>
+                <span>5,000</span>
+                <span>10,000</span>
+              </div>
+
+              <div class="stat-tile mt-4">
+                <div class="muted-label">Estimated Odds</div>
+                <div class="odds-value">1 : {{ sampleSize | number }}</div>
+                <div class="dashboard-progress dashboard-progress--compact">
+                  <span [style.width.%]="(sampleSize / 10000) * 100"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="dashboard-card inset-card">
+                <div class="section-title section-title--sm">Algorithm Phases</div>
+                <div class="phase-list">
+                  <div class="phase-item"><span class="phase-dot"></span><span>Subscription tier weighting</span></div>
+                  <div class="phase-item"><span class="phase-dot"></span><span>Most and least frequent score clustering</span></div>
+                  <div class="phase-item"><span class="phase-dot"></span><span>Simulation pass before official publish</span></div>
+                </div>
+              </div>
+
+              <button type="button" class="btn dashboard-btn dashboard-btn--outline w-100 mt-3" (click)="runSimulation()">
+                Run Simulation
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-xl-5">
+        <article class="dashboard-card dashboard-card--lg h-100">
+          <div class="section-title text-center">Vanguard Draw Live</div>
+          <div class="stat-tile">
+            <div class="muted-label">Tickets In System</div>
+            <div class="stat-tile__headline">184,902</div>
+          </div>
+          <div class="stat-tile">
+            <div class="muted-label">Next Draw In</div>
+            <div class="stat-tile__headline accent-copy accent-copy--rose">{{ nextDrawCountdown }}</div>
+          </div>
+          <button type="button" class="btn dashboard-btn dashboard-btn--primary w-100 mt-4" (click)="executeDraw()">
+            Execute Final Draw
+          </button>
+        </article>
+      </div>
+
+      <div class="col-12">
+        <article class="dashboard-card">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div class="section-title">User and Subscription Management</div>
+            <div class="pill-tag">{{ filteredUsers.length }} shown</div>
+          </div>
+
+          <div class="hero-table">
+            <div class="hero-table__head">
+              <span>User</span>
+              <span>Plan</span>
+              <span>Status</span>
+              <span>Charity</span>
+              <span>Actions</span>
+            </div>
+
+            <div class="hero-table__row" *ngFor="let user of filteredUsers">
+              <div class="hero-table__operative">
+                <div class="avatar-circle avatar-circle--sm">{{ user.name.slice(0, 2).toUpperCase() }}</div>
+                <div>
+                  <div class="history-copy__title">{{ user.name }}</div>
+                  <div class="history-copy__meta">ID: {{ user.id }}</div>
+                </div>
+              </div>
+              <div><span class="tier-pill">{{ user.plan }}</span></div>
+              <div [class.muted-copy]="user.subscription !== 'Active'">{{ user.subscription }}</div>
+              <div>{{ user.charity }}</div>
+              <div><button type="button" class="table-action" (click)="cycleSubscription(user)">Cycle Status</button></div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-12">
+        <article class="dashboard-card">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div class="section-title">Charity and Winner Management</div>
+            <div class="pill-tag pill-tag--rose">{{ winners.length }} winners tracked</div>
+          </div>
+
+          <div class="content-grid">
+            <article class="dashboard-card inset-card">
+              <div class="section-title section-title--sm">Managed Charities</div>
+              <div class="phase-list">
+                <div class="phase-item" *ngFor="let charity of charities">
+                  <span class="phase-dot"></span>
+                  <span>{{ charity }}</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="dashboard-card inset-card">
+              <div class="section-title section-title--sm">Winner States</div>
+              <div class="phase-list">
+                <div class="phase-item" *ngFor="let winner of winners">
+                  <span class="phase-dot"></span>
+                  <span>{{ winner.name }} · {{ winner.tier }} · {{ winner.state }}</span>
+                  <button type="button" class="table-action ms-auto" (click)="cycleWinnerState(winner)">Advance</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>

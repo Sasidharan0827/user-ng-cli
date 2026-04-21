@@ -1,0 +1,190 @@
+<div class="dashboard-shell">
+  <aside class="dashboard-sidebar">
+    <div>
+      <div class="brand">Digital Heroes</div>
+
+      <nav class="nav flex-column dashboard-nav">
+        <a
+          *ngFor="let item of navItems; let first = first"
+          class="dashboard-nav__item"
+          [class.active]="first"
+          [routerLink]="item.route"
+        >
+          <span class="dashboard-nav__icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-cta">
+      <div class="profile-chip">
+        <div class="avatar-circle avatar-circle--sm">VC</div>
+        <div>
+          <div class="profile-chip__title">Subscriber Access</div>
+          <div class="profile-chip__meta">{{ subscription.status }} · {{ subscription.plan }}</div>
+        </div>
+      </div>
+      <a class="btn dashboard-btn dashboard-btn--primary w-100 mt-4" routerLink="/draws">Review Next Draw</a>
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    <header class="dashboard-topbar">
+      <div>
+        <h1 class="dashboard-title">Command Center</h1>
+        <div class="dashboard-subtitle">Subscriber dashboard with scoring, charity, and winnings controls.</div>
+      </div>
+      <div class="topbar-actions">
+        <a class="btn dashboard-btn dashboard-btn--ghost" routerLink="/">Public Landing</a>
+        <a class="btn dashboard-btn dashboard-btn--primary" routerLink="/admin">Admin Control</a>
+      </div>
+    </header>
+
+    <section class="row g-4">
+      <div class="col-xl-8">
+        <article class="dashboard-card dashboard-card--lg">
+          <div class="eyebrow">Latest 5 Stableford Scores</div>
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+            <div class="hero-headline">Rolling Score Trajectory</div>
+            <div class="metric-float">
+              <span>Rolling Avg</span>
+              <strong>{{ averageScore }}</strong>
+            </div>
+          </div>
+
+          <div class="performance-chart">
+            <div class="performance-item" *ngFor="let item of sortedScores">
+              <div class="performance-item__bar" [style.height.%]="getBarHeight(item.score)"></div>
+              <strong>{{ item.score }}</strong>
+              <span>{{ formatDate(item.date) }}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-xl-4">
+        <article class="dashboard-card dashboard-card--lg h-100">
+          <div class="eyebrow">Charity Selection</div>
+          <h3 class="card-heading">Contribution Control</h3>
+
+          <div class="impact-module">
+            <div class="avatar-circle avatar-circle--rose">❤</div>
+            <div>
+              <div class="muted-label">Active Selection</div>
+              <div class="impact-module__title">{{ selectedCharity }}</div>
+            </div>
+          </div>
+
+          <label class="field-stack mt-4">
+            <span class="muted-label">Supported charity</span>
+            <select [(ngModel)]="selectedCharity" class="dashboard-select">
+              <option *ngFor="let charity of charities" [ngValue]="charity">{{ charity }}</option>
+            </select>
+          </label>
+
+          <div class="progress-panel mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span>Total Contribution</span>
+              <strong>{{ contributionRate }}%</strong>
+            </div>
+            <div class="dashboard-progress">
+              <span [style.width.%]="contributionRate"></span>
+            </div>
+            <input class="form-range dashboard-range mt-3" type="range" min="10" max="40" [(ngModel)]="contributionRate" />
+            <small>Minimum 10% of subscription fee, with optional higher contribution.</small>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-lg-4">
+        <article class="dashboard-card">
+          <div class="section-title">Subscription Status</div>
+          <div class="stat-tile stat-tile--active">
+            <div class="muted-label">Current State</div>
+            <div class="stat-tile__headline">{{ subscription.status }}</div>
+            <div class="accent-copy">{{ subscription.plan }}</div>
+          </div>
+          <div class="stat-tile">
+            <div class="muted-label">Renewal Date</div>
+            <div class="stat-tile__headline">{{ subscription.renewalDate }}</div>
+            <div class="muted-copy">Validated on authenticated requests</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-lg-4">
+        <article class="dashboard-card">
+          <div class="section-title">Participation Summary</div>
+          <div class="muted-label">Upcoming Draw</div>
+          <div class="plan-title">{{ subscription.nextDraw }}</div>
+          <hr class="dashboard-divider">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="muted-label">Draws Entered</div>
+              <div class="accent-copy">{{ subscription.drawsEntered }}</div>
+            </div>
+            <a class="dashboard-link" routerLink="/draws">View Logic</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-lg-4">
+        <article class="dashboard-card dashboard-card--promo">
+          <div class="promo-visual"></div>
+          <div class="promo-title">Winnings Overview</div>
+          <p>{{ subscription.totalWon }} total won. Current payment state: {{ subscription.paymentState }}.</p>
+          <a class="dashboard-link" routerLink="/winners">Review Verification Flow</a>
+        </article>
+      </div>
+
+      <div class="col-12">
+        <article class="dashboard-card">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div class="section-title">Score Entry and Edit</div>
+            <span class="pill-tag">{{ scores.length }} / 5 retained</span>
+          </div>
+
+          <div class="score-manager">
+            <form class="score-form" (ngSubmit)="saveScore()">
+              <label class="field-stack">
+                <span class="muted-label">Score date</span>
+                <input type="date" [(ngModel)]="scoreForm.date" name="scoreDate" class="dashboard-input" />
+              </label>
+
+              <label class="field-stack">
+                <span class="muted-label">Stableford score</span>
+                <input type="number" [(ngModel)]="scoreForm.score" name="scoreValue" min="1" max="45" class="dashboard-input" />
+              </label>
+
+              <div class="score-form__actions">
+                <button type="submit" class="dashboard-btn dashboard-btn--primary">
+                  {{ editingId !== null ? 'Update Score' : 'Save Score' }}
+                </button>
+                <button type="button" class="dashboard-btn dashboard-btn--ghost" *ngIf="editingId !== null" (click)="cancelEdit()">
+                  Cancel Edit
+                </button>
+              </div>
+
+              <p class="muted-copy">{{ formMessage }}</p>
+            </form>
+
+            <div class="history-list">
+              <div class="history-row history-row--editable" *ngFor="let entry of sortedScores">
+                <div class="history-score">{{ entry.score }}</div>
+                <div class="history-copy">
+                  <div class="history-copy__title">Stableford Round</div>
+                  <div class="history-copy__meta">{{ formatDate(entry.date) }}</div>
+                </div>
+                <div class="history-impact">Eligible for monthly draw</div>
+                <div class="history-status history-status--actions">
+                  <button type="button" class="table-action" (click)="startEdit(entry)">Edit</button>
+                  <button type="button" class="table-action table-action--danger" (click)="deleteScore(entry.id)">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
