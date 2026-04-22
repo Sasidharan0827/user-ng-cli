@@ -1,52 +1,28 @@
-import { Component } from '@angular/core';
-
-interface ScoreEntry {
-  id: number;
-  date: string;
-  score: number;
-}
-
-interface DashboardLink {
-  label: string;
-  route: string;
-  icon: string;
-}
+import { Component, OnInit } from '@angular/core';
+import { ScoreEntry, UserDashboardState, UserSubscription } from '../../models/content.model';
+import { UserDashboardService } from '../../service/user-dashboard.service';
 
 @Component({
   selector: 'app-user-dashboard',
   templateUrl: './user-dashboard.component.html',
   styleUrls: ['./user-dashboard.component.scss']
 })
-export class UserDashboardComponent {
-  readonly navItems: DashboardLink[] = [
-    { label: 'Overview', route: '/dashboard', icon: 'OV' },
-    { label: 'Charity Directory', route: '/charities', icon: 'CH' },
-    { label: 'Draw Engine', route: '/draws', icon: 'DR' },
-    { label: 'Winner Flow', route: '/winners', icon: 'WV' },
-    { label: 'Admin View', route: '/admin', icon: 'AD' }
-  ];
-
-  readonly subscription = {
-    status: 'Active',
-    plan: 'Yearly Plan',
-    renewalDate: '12 Mar 2027',
-    nextDraw: '01 May 2026',
-    drawsEntered: 11,
-    totalWon: '$1,450',
-    paymentState: 'Pending payout review'
+export class UserDashboardComponent implements OnInit {
+  subscription: UserSubscription = {
+    status: '',
+    plan: '',
+    renewalDate: '',
+    nextDraw: '',
+    drawsEntered: 0,
+    totalWon: '',
+    paymentState: ''
   };
 
-  readonly charities = ['Global Literacy Front', 'Kinetic Recovery', 'Verdant Initiative', 'Harbor Community Fund'];
-  selectedCharity = this.charities[0];
-  contributionRate = 12;
+  charities: string[] = [];
+  selectedCharity = '';
+  contributionRate = 10;
 
-  scores: ScoreEntry[] = [
-    { id: 1, date: '2026-04-18', score: 39 },
-    { id: 2, date: '2026-04-12', score: 35 },
-    { id: 3, date: '2026-04-03', score: 42 },
-    { id: 4, date: '2026-03-27', score: 37 },
-    { id: 5, date: '2026-03-18', score: 40 }
-  ];
+  scores: ScoreEntry[] = [];
 
   scoreForm = {
     date: '',
@@ -56,11 +32,23 @@ export class UserDashboardComponent {
   editingId: number | null = null;
   formMessage = 'Add a score between 1 and 45. Only one entry is allowed per date.';
 
+  constructor(private readonly userDashboardService: UserDashboardService) {}
+
+  ngOnInit(): void {
+    this.userDashboardService.getDashboard().subscribe((dashboard) => {
+      this.applyDashboard(dashboard);
+    });
+  }
+
   get sortedScores(): ScoreEntry[] {
     return [...this.scores].sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime());
   }
 
   get averageScore(): string {
+    if (this.scores.length === 0) {
+      return '0.0';
+    }
+
     const total = this.scores.reduce((sum, item) => sum + item.score, 0);
     return (total / this.scores.length).toFixed(1);
   }
@@ -71,6 +59,14 @@ export class UserDashboardComponent {
 
   getBarHeight(score: number): number {
     return Math.max(36, Math.round((score / this.maxScore) * 100));
+  }
+
+  savePreferences(): void {
+    this.userDashboardService.updatePreferences(this.selectedCharity, this.contributionRate).subscribe((response) => {
+      this.selectedCharity = response.selectedCharity;
+      this.contributionRate = response.contributionRate;
+      this.formMessage = response.message;
+    });
   }
 
   saveScore(): void {
@@ -93,24 +89,19 @@ export class UserDashboardComponent {
     }
 
     if (this.editingId !== null) {
-      this.scores = this.scores.map((entry) =>
-        entry.id === this.editingId ? { ...entry, date: trimmedDate, score: this.scoreForm.score } : entry
-      );
-      this.formMessage = 'Score updated successfully.';
-    } else {
-      this.scores = [
-        ...this.scores,
-        {
-          id: Date.now(),
-          date: trimmedDate,
-          score: this.scoreForm.score
-        }
-      ];
-      this.formMessage = 'Score added successfully.';
+      this.userDashboardService.updateScore(this.editingId, trimmedDate, this.scoreForm.score).subscribe((response) => {
+        this.scores = response.scores;
+        this.formMessage = response.message;
+        this.cancelEdit();
+      });
+      return;
     }
 
-    this.scores = this.sortedScores.slice(0, 5);
-    this.cancelEdit();
+    this.userDashboardService.createScore(trimmedDate, this.scoreForm.score).subscribe((response) => {
+      this.scores = response.scores;
+      this.formMessage = response.message;
+      this.cancelEdit();
+    });
   }
 
   startEdit(entry: ScoreEntry): void {
@@ -120,9 +111,11 @@ export class UserDashboardComponent {
   }
 
   deleteScore(entryId: number): void {
-    this.scores = this.scores.filter((entry) => entry.id !== entryId);
-    this.cancelEdit();
-    this.formMessage = 'Score removed.';
+    this.userDashboardService.deleteScore(entryId).subscribe((response) => {
+      this.scores = response.scores;
+      this.cancelEdit();
+      this.formMessage = response.message;
+    });
   }
 
   cancelEdit(): void {
@@ -132,5 +125,13 @@ export class UserDashboardComponent {
 
   formatDate(value: string): string {
     return new Date(value).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  private applyDashboard(dashboard: UserDashboardState): void {
+    this.subscription = dashboard.subscription;
+    this.charities = dashboard.charities;
+    this.selectedCharity = dashboard.selectedCharity;
+    this.contributionRate = dashboard.contributionRate;
+    this.scores = dashboard.scores;
   }
 }

@@ -1,80 +1,86 @@
 <section class="marketing-shell">
-  <header class="marketing-nav">
+  <header class="marketing-nav" data-aos="fade-up">
     <a class="brand-lockup" routerLink="/">
       <span class="brand-mark brand-mark--small">DH</span>
       <span>Digital Heroes</span>
     </a>
 
     <nav class="marketing-links">
+      <a routerLink="/subscribe">Subscribe</a>
       <a routerLink="/draws">Draws</a>
       <a routerLink="/charities">Charities</a>
       <a routerLink="/dashboard">Dashboard</a>
       <a routerLink="/admin">Admin</a>
+      <a routerLink="/login">Login</a>
     </nav>
 
-    <a class="dashboard-btn dashboard-btn--primary" routerLink="/dashboard">Join The Movement</a>
+    <a class="dashboard-btn dashboard-btn--primary" routerLink="/login"
+      >Join The Movement</a
+    >
   </header>
 
   <section class="hero-stage">
-    <div class="hero-copy">
-      <p class="eyebrow">Digital Heroes PRD Frontend</p>
-      <h1 class="landing-title">Play for impact. Track scores. Fund real charities.</h1>
+    <div class="hero-copy" data-aos="fade-up">
+      <p class="eyebrow">{{ data.hero.eyebrow }}</p>
+      <h1 class="landing-title">
+        {{ data.hero.title }}
+      </h1>
       <p class="landing-lead">
-        A subscription-led golf performance platform with monthly prize draws, charity selection, score retention rules,
-        and a full admin control layer, presented with a modern non-traditional golf aesthetic.
+        {{ data.hero.lead }}
       </p>
 
-      <div class="hero-actions">
-        <a class="dashboard-btn dashboard-btn--primary" routerLink="/dashboard">Open User Panel</a>
-        <a class="dashboard-btn dashboard-btn--ghost" routerLink="/admin">Open Admin Panel</a>
+      <div class="hero-actions py-5">
+        <a class="dashboard-btn dashboard-btn--primary" routerLink="/subscribe"
+          >Subscribe Now</a
+        >
+        <a class="dashboard-btn dashboard-btn--primary" routerLink="/dashboard"
+          >Open User Panel</a
+        >
+        <a class="dashboard-btn dashboard-btn--primary" routerLink="/admin"
+          >Open Admin Panel</a
+        >
+        <a class="dashboard-btn dashboard-btn--primary" routerLink="/login"
+          >Open Login</a
+        >
       </div>
 
       <div class="hero-stat-grid">
-        <article class="info-panel">
-          <span class="muted-label">Subscription Plans</span>
-          <strong>Monthly + Yearly</strong>
-          <p>Built to support renewal, lapse, and cancellation states.</p>
-        </article>
-        <article class="info-panel">
-          <span class="muted-label">Score Rules</span>
-          <strong>Latest 5 only</strong>
-          <p>Stableford entries retain reverse chronology with duplicate-date protection.</p>
-        </article>
-        <article class="info-panel">
-          <span class="muted-label">Reward Engine</span>
-          <strong>3 / 4 / 5 match</strong>
-          <p>Monthly cadence with simulation mode and jackpot rollover logic.</p>
+        <article class="info-panel" *ngFor="let stat of data.hero.stats">
+          <span class="muted-label">{{ stat.label }}</span>
+          <strong>{{ stat.value }}</strong>
+          <p>{{ stat.detail }}</p>
         </article>
       </div>
     </div>
 
-    <aside class="hero-orbit">
+    <aside class="hero-orbit" data-aos="fade-left">
       <div class="orbital-card">
-        <span class="pill-tag">Mission First</span>
-        <h2>Every subscription drives prize funding and charity impact.</h2>
+        <span class="pill-tag">{{ data.hero.missionCard.tag }}</span>
+        <h2>{{ data.hero.missionCard.title }}</h2>
         <ul class="orbital-list">
-          <li>Minimum charity contribution set to 10%</li>
-          <li>Independent donations supported</li>
-          <li>Admin-managed charities, winners, and payouts</li>
+          <li *ngFor="let item of data.hero.missionCard.items">{{ item }}</li>
         </ul>
       </div>
     </aside>
   </section>
 
-  <section class="content-section">
+  <section class="content-section" data-aos="fade-up">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">How It Works</p>
-        <h2 class="section-display">A clear public journey from signup to winnings.</h2>
+      <p class="eyebrow">How It Works</p>
+        <h2 class="section-display">
+          A clear public journey from signup to winnings.
+        </h2>
       </div>
       <p class="section-copy">
-        The homepage needs to explain the value proposition, draw mechanics, and charity outcome before it asks for
-        conversion. These blocks satisfy that flow.
+        The homepage needs to explain the value proposition, draw mechanics, and
+        charity outcome before it asks for conversion. These blocks satisfy that
+        flow.
       </p>
     </div>
 
     <div class="journey-grid">
-      <article class="journey-card" *ngFor="let item of journey">
+      <article class="journey-card" *ngFor="let item of data.journey">
         <span class="journey-step">{{ item.step }}</span>
         <h3>{{ item.title }}</h3>
         <p>{{ item.copy }}</p>
@@ -82,36 +88,53 @@
     </div>
   </section>
 
-  <section class="content-section">
+  <section class="content-section" data-aos="fade-up">
     <div class="section-heading">
       <div>
         <p class="eyebrow">Plans</p>
-        <h2 class="section-display">Subscription choices that support access control and contributions.</h2>
+        <h2 class="section-display">
+          Subscription choices that support access control and contributions.
+        </h2>
       </div>
     </div>
 
     <div class="plan-grid">
-      <article class="plan-card" *ngFor="let plan of plans; let featured = first" [class.plan-card--featured]="featured">
+      <article
+        class="plan-card"
+        *ngFor="let plan of data.plans; let featured = first"
+        [class.plan-card--featured]="featured"
+      >
         <span class="pill-tag" *ngIf="featured">Recommended</span>
         <h3>{{ plan.name }}</h3>
         <div class="plan-price">{{ plan.price }}</div>
         <p class="plan-copy">{{ plan.cadence }}</p>
         <p>{{ plan.detail }}</p>
+        <a
+          class="dashboard-btn dashboard-btn--primary w-100 mt-3"
+          [routerLink]="['/subscribe']"
+          [queryParams]="{ plan: plan.name.toLowerCase() }"
+        >
+          Choose {{ plan.name }}
+        </a>
       </article>
     </div>
   </section>
 
-  <section class="content-section">
+  <section class="content-section" data-aos="fade-up">
     <div class="section-heading">
       <div>
         <p class="eyebrow">Featured Charities</p>
-        <h2 class="section-display">Impact-led discovery instead of a traditional golf-first homepage.</h2>
+        <h2 class="section-display">
+          Impact-led discovery instead of a traditional golf-first homepage.
+        </h2>
       </div>
-      <a class="dashboard-link" routerLink="/charities">Browse full directory</a>
+      <a class="dashboard-link" routerLink="/charities"
+        >Browse full directory</a
+      >
     </div>
 
     <div class="charity-card-grid">
-      <article class="charity-card" *ngFor="let charity of charities">
+      <article class="charity-card" *ngFor="let charity of data.charities">
         <span class="pill-tag pill-tag--rose">{{ charity.category }}</span>
         <h3>{{ charity.name }}</h3>
         <p>{{ charity.summary }}</p>
@@ -120,18 +143,28 @@
     </div>
   </section>
 
-  <section class="cta-band">
+  <section class="cta-band" data-aos="fade-up">
     <div>
       <p class="eyebrow">Delivery Checklist</p>
-      <h2 class="section-display">Frontend coverage for public visitor, subscriber, and admin roles.</h2>
+      <h2 class="section-display">
+        Frontend coverage for public visitor, subscriber, and admin roles.
+      </h2>
       <p class="section-copy">
-        The Angular app now contains a landing experience, charity directory, draw system page, user dashboard, winner
-        review flow, and admin control center aligned to the PDF.
+        The Angular app now contains a landing experience, charity directory,
+        draw system page, user dashboard, winner review flow, and admin control
+        center aligned to the PDF.
       </p>
     </div>
     <div class="hero-actions">
-      <a class="dashboard-btn dashboard-btn--primary" routerLink="/draws">Review Draw Logic</a>
-      <a class="dashboard-btn dashboard-btn--ghost" routerLink="/winners">Review Winner Flow</a>
+      <a class="dashboard-btn dashboard-btn--primary" routerLink="/subscribe"
+        >Start Subscription</a
+      >
+      <a class="dashboard-btn dashboard-btn--primary" routerLink="/draws"
+        >Review Draw Logic</a
+      >
+      <a class="dashboard-btn dashboard-btn--ghost" routerLink="/winners"
+        >Review Winner Flow</a
+      >
     </div>
   </section>
 </section>

@@ -1,0 +1,37 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+
+import { SubscribeComponent } from './subscribe.component';
+
+describe('SubscribeComponent', () => {
+  let component: SubscribeComponent;
+  let fixture: ComponentFixture<SubscribeComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [SubscribeComponent],
+      imports: [FormsModule],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              queryParamMap: {
+                get: () => null
+              }
+            }
+          }
+        }
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(SubscribeComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

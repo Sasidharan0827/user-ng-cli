@@ -1,0 +1,78 @@
+<section class="subscribe-shell">
+  <div class="subscribe-copy" data-aos="fade-up">
+    <p class="eyebrow">Subscription Checkout</p>
+    <h1 class="page-title">Choose a plan and activate subscriber access.</h1>
+    <p class="section-copy">
+      This is the place to subscribe. Pick monthly or yearly access, select your charity, and continue into the member experience.
+    </p>
+
+    <div class="plan-grid subscribe-plan-grid">
+      <article
+        class="plan-card subscribe-plan-card"
+        *ngFor="let plan of plans"
+        [class.plan-card--featured]="selectedPlan === plan.id"
+      >
+        <span class="pill-tag" *ngIf="selectedPlan === plan.id">Selected</span>
+        <h3>{{ plan.name }}</h3>
+        <div class="plan-price">{{ plan.price }}</div>
+        <p class="plan-copy">{{ plan.cadence }}</p>
+        <p>{{ plan.detail }}</p>
+        <button type="button" class="dashboard-btn dashboard-btn--primary w-100 mt-3" (click)="selectPlan(plan.id)">
+          {{ selectedPlan === plan.id ? 'Current Plan' : 'Select ' + plan.name }}
+        </button>
+      </article>
+    </div>
+  </div>
+
+  <div class="dashboard-card dashboard-card--lg subscribe-form-card" data-aos="fade-left">
+    <ng-container *ngIf="!submitted; else successState">
+      <p class="eyebrow">Subscriber Details</p>
+      <h2 class="section-display section-display--sm">{{ activePlan.name }} plan</h2>
+      <p class="section-copy">{{ activePlan.price }} · {{ activePlan.cadence }}</p>
+
+      <form class="login-form" (ngSubmit)="subscribe()">
+        <label class="field-stack">
+          <span class="muted-label">Full Name</span>
+          <input [(ngModel)]="form.name" name="name" type="text" class="dashboard-input" required />
+        </label>
+
+        <label class="field-stack">
+          <span class="muted-label">Email</span>
+          <input [(ngModel)]="form.email" name="email" type="email" class="dashboard-input" required />
+        </label>
+
+        <label class="field-stack">
+          <span class="muted-label">Preferred Charity</span>
+          <select [(ngModel)]="form.charity" name="charity" class="dashboard-input">
+            <option *ngFor="let charity of charities" [value]="charity">{{ charity }}</option>
+          </select>
+        </label>
+
+        <label class="field-stack">
+          <span class="muted-label">Charity Contribution %</span>
+          <input [(ngModel)]="form.contribution" name="contribution" type="number" min="10" max="100" class="dashboard-input" />
+        </label>
+
+        <label class="subscribe-check">
+          <input [(ngModel)]="form.agree" name="agree" type="checkbox" required />
+          <span>I agree to start the {{ activePlan.name.toLowerCase() }} subscription.</span>
+        </label>
+
+        <button type="submit" class="dashboard-btn dashboard-btn--primary w-100">Confirm Subscription</button>
+      </form>
+    </ng-container>
+
+    <ng-template #successState>
+      <p class="eyebrow">Subscription Ready</p>
+      <h2 class="section-display section-display--sm">You can now continue as a subscriber.</h2>
+      <p class="section-copy">
+        {{ confirmationMessage }} Plan: {{ activePlan.name }}. Charity: {{ form.charity }}. Contribution: {{ form.contribution }}%.
+      </p>
+
+      <div class="hero-actions">
+        <a class="dashboard-btn dashboard-btn--primary" routerLink="/dashboard">Open User Dashboard</a>
+        <a class="dashboard-btn dashboard-btn--outline" routerLink="/login">Go To Login</a>
+      </div>
+    </ng-template>
+  </div>
+</section>

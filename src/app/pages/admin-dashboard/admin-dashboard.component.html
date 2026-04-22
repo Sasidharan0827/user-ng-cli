@@ -1,97 +1,58 @@
-<div class="dashboard-shell dashboard-shell--admin">
-  <aside class="dashboard-sidebar">
-    <div>
-      <div class="brand brand--with-mark">
-        <span class="brand-mark">⚡</span>
-        <span>Digital Heroes</span>
-      </div>
-
-      <div class="profile-panel">
-        <div class="avatar-circle">VC</div>
-        <div>
-          <div class="profile-chip__title">System Control</div>
-          <div class="profile-chip__meta">Admin Level: Heroic</div>
-        </div>
-      </div>
-
-      <nav class="nav flex-column dashboard-nav">
-        <a
-          *ngFor="let item of navItems"
-          class="dashboard-nav__item"
-          [class.active]="item.label === 'Draw Status'"
-          [routerLink]="item.route"
-        >
-          <span class="dashboard-nav__icon">{{ item.icon }}</span>
-          <span>{{ item.label }}</span>
-        </a>
-      </nav>
+<header class="dashboard-topbar" data-aos="fade-up">
+  <div>
+    <h1 class="dashboard-title dashboard-title--cyan">System Command</h1>
+    <div class="dashboard-subtitle">Draw Configuration & Management</div>
+  </div>
+  <div class="topbar-actions">
+    <div class="search-box">
+      <span>⌕</span>
+      <input type="text" [(ngModel)]="filterTerm" placeholder="Search users, plan, or charity..." />
     </div>
+    <span class="pill-tag">{{ data.drawStatus }}</span>
+  </div>
+</header>
 
-    <div class="sidebar-cta">
-      <a class="btn dashboard-btn dashboard-btn--primary w-100" routerLink="/dashboard">Open Subscriber View</a>
-      <div class="sidebar-links">
-        <a routerLink="/">Public Site</a>
-        <a routerLink="/winners">Winner Queue</a>
-      </div>
-    </div>
-  </aside>
+<section class="row g-4">
+  <div class="col-md-4">
+    <article class="dashboard-card metric-card" data-accent="cyan" data-aos="fade-up">
+          <div class="eyebrow">{{ data.metrics.prizePool.label }}</div>
+          <div class="metric-card__value">{{ data.metrics.prizePool.value }}</div>
+          <div class="metric-card__detail">{{ data.metrics.prizePool.detail }}</div>
+    </article>
+  </div>
 
-  <main class="dashboard-main">
-    <header class="dashboard-topbar">
-      <div>
-        <h1 class="dashboard-title dashboard-title--cyan">System Command</h1>
-        <div class="dashboard-subtitle">Draw Configuration & Management</div>
-      </div>
-      <div class="topbar-actions">
-        <div class="search-box">
-          <span>⌕</span>
-          <input type="text" [(ngModel)]="filterTerm" placeholder="Search users, plan, or charity..." />
-        </div>
-        <span class="pill-tag">{{ drawStatus }}</span>
-      </div>
-    </header>
+  <div class="col-md-4">
+    <article class="dashboard-card metric-card" data-accent="violet" data-aos="fade-up" data-aos-delay="80">
+          <div class="eyebrow">{{ data.metrics.charityImpact.label }}</div>
+          <div class="metric-card__value">{{ data.metrics.charityImpact.value }}</div>
+          <div class="metric-card__detail">{{ data.metrics.charityImpact.detail }}</div>
+    </article>
+  </div>
 
-    <section class="row g-4">
-      <div class="col-md-4">
-        <article class="dashboard-card metric-card" data-accent="cyan">
-          <div class="eyebrow">Total Prize Pool</div>
-          <div class="metric-card__value">$428,190</div>
-          <div class="metric-card__detail">Auto-calculated from active subscriptions</div>
-        </article>
-      </div>
-
-      <div class="col-md-4">
-        <article class="dashboard-card metric-card" data-accent="violet">
-          <div class="eyebrow">Charity Contributions</div>
-          <div class="metric-card__value">$84,022</div>
-          <div class="metric-card__detail">Minimum 10% contribution enforced</div>
-        </article>
-      </div>
-
-      <div class="col-md-4">
-        <article class="dashboard-card metric-card">
+  <div class="col-md-4">
+    <article class="dashboard-card metric-card" data-aos="fade-up" data-aos-delay="160">
           <div class="eyebrow">Active Subscribers</div>
           <div class="metric-card__value">{{ activeUserCount }}</div>
           <div class="metric-card__detail">Visible across reports and draw eligibility</div>
-        </article>
-      </div>
+    </article>
+  </div>
 
-      <div class="col-xl-7">
-        <article class="dashboard-card dashboard-card--lg">
+  <div class="col-xl-7">
+    <article class="dashboard-card dashboard-card--lg" data-aos="fade-up">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div class="section-title">Draw Logic Configuration</div>
             <div class="segment-switch">
               <button
                 type="button"
-                [class.active]="algorithmMode === 'Algorithmic'"
-                (click)="algorithmMode = 'Algorithmic'"
+                [class.active]="data.algorithmMode === 'Algorithmic'"
+                (click)="data.algorithmMode = 'Algorithmic'"
               >
                 Algorithmic
               </button>
               <button
                 type="button"
-                [class.active]="algorithmMode === 'Random'"
-                (click)="algorithmMode = 'Random'"
+                [class.active]="data.algorithmMode === 'Random'"
+                (click)="data.algorithmMode = 'Random'"
               >
                 Random
               </button>
@@ -106,7 +67,7 @@
                 type="range"
                 min="100"
                 max="10000"
-                [value]="sampleSize"
+                [value]="data.sampleSize"
                 (input)="updateSampleSize($event)"
               />
               <div class="range-scale">
@@ -117,9 +78,9 @@
 
               <div class="stat-tile mt-4">
                 <div class="muted-label">Estimated Odds</div>
-                <div class="odds-value">1 : {{ sampleSize | number }}</div>
+                <div class="odds-value">1 : {{ data.sampleSize | number }}</div>
                 <div class="dashboard-progress dashboard-progress--compact">
-                  <span [style.width.%]="(sampleSize / 10000) * 100"></span>
+                  <span [style.width.%]="(data.sampleSize / 10000) * 100"></span>
                 </div>
               </div>
             </div>
@@ -128,9 +89,7 @@
               <div class="dashboard-card inset-card">
                 <div class="section-title section-title--sm">Algorithm Phases</div>
                 <div class="phase-list">
-                  <div class="phase-item"><span class="phase-dot"></span><span>Subscription tier weighting</span></div>
-                  <div class="phase-item"><span class="phase-dot"></span><span>Most and least frequent score clustering</span></div>
-                  <div class="phase-item"><span class="phase-dot"></span><span>Simulation pass before official publish</span></div>
+                  <div class="phase-item" *ngFor="let phase of data.phases"><span class="phase-dot"></span><span>{{ phase.label }}</span></div>
                 </div>
               </div>
 
@@ -139,28 +98,28 @@
               </button>
             </div>
           </div>
-        </article>
-      </div>
+    </article>
+  </div>
 
-      <div class="col-xl-5">
-        <article class="dashboard-card dashboard-card--lg h-100">
+  <div class="col-xl-5">
+    <article class="dashboard-card dashboard-card--lg h-100" data-aos="fade-up" data-aos-delay="120">
           <div class="section-title text-center">Vanguard Draw Live</div>
           <div class="stat-tile">
             <div class="muted-label">Tickets In System</div>
-            <div class="stat-tile__headline">184,902</div>
+            <div class="stat-tile__headline">{{ data.ticketsInSystem | number }}</div>
           </div>
           <div class="stat-tile">
             <div class="muted-label">Next Draw In</div>
-            <div class="stat-tile__headline accent-copy accent-copy--rose">{{ nextDrawCountdown }}</div>
+            <div class="stat-tile__headline accent-copy accent-copy--rose">{{ data.nextDrawCountdown }}</div>
           </div>
           <button type="button" class="btn dashboard-btn dashboard-btn--primary w-100 mt-4" (click)="executeDraw()">
             Execute Final Draw
           </button>
-        </article>
-      </div>
+    </article>
+  </div>
 
-      <div class="col-12">
-        <article class="dashboard-card">
+  <div class="col-12">
+    <article class="dashboard-card" data-aos="fade-up">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div class="section-title">User and Subscription Management</div>
             <div class="pill-tag">{{ filteredUsers.length }} shown</div>
@@ -189,21 +148,21 @@
               <div><button type="button" class="table-action" (click)="cycleSubscription(user)">Cycle Status</button></div>
             </div>
           </div>
-        </article>
-      </div>
+    </article>
+  </div>
 
-      <div class="col-12">
-        <article class="dashboard-card">
+  <div class="col-12">
+    <article class="dashboard-card" data-aos="fade-up">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div class="section-title">Charity and Winner Management</div>
-            <div class="pill-tag pill-tag--rose">{{ winners.length }} winners tracked</div>
+            <div class="pill-tag pill-tag--rose">{{ data.winners.length }} winners tracked</div>
           </div>
 
           <div class="content-grid">
             <article class="dashboard-card inset-card">
               <div class="section-title section-title--sm">Managed Charities</div>
               <div class="phase-list">
-                <div class="phase-item" *ngFor="let charity of charities">
+                <div class="phase-item" *ngFor="let charity of data.charities">
                   <span class="phase-dot"></span>
                   <span>{{ charity }}</span>
                 </div>
@@ -213,7 +172,7 @@
             <article class="dashboard-card inset-card">
               <div class="section-title section-title--sm">Winner States</div>
               <div class="phase-list">
-                <div class="phase-item" *ngFor="let winner of winners">
+                <div class="phase-item" *ngFor="let winner of data.winners">
                   <span class="phase-dot"></span>
                   <span>{{ winner.name }} · {{ winner.tier }} · {{ winner.state }}</span>
                   <button type="button" class="table-action ms-auto" (click)="cycleWinnerState(winner)">Advance</button>
@@ -221,8 +180,6 @@
               </div>
             </article>
           </div>
-        </article>
-      </div>
-    </section>
-  </main>
-</div>
+    </article>
+  </div>
+</section>

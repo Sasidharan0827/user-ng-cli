@@ -1,0 +1,73 @@
+.toast-stack {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1200;
+  display: grid;
+  gap: 0.9rem;
+  width: min(24rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.toast-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  padding: 1rem 1rem 1rem 1.15rem;
+  border: 1px solid rgba(63, 214, 255, 0.24);
+  border-radius: 1.25rem;
+  background:
+    linear-gradient(180deg, rgba(14, 25, 46, 0.98), rgba(11, 18, 34, 0.98));
+  box-shadow: 0 24px 50px rgba(4, 11, 24, 0.36);
+  pointer-events: auto;
+}
+
+.toast-card--success {
+  border-color: rgba(63, 214, 255, 0.28);
+}
+
+.toast-card--error {
+  border-color: rgba(245, 173, 172, 0.28);
+}
+
+.toast-card__eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.toast-card--error .toast-card__eyebrow {
+  color: var(--rose);
+}
+
+.toast-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.toast-card p:last-child {
+  margin: 0.45rem 0 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.toast-card__close {
+  align-self: start;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+@media (max-width: 767.98px) {
+  .toast-stack {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+  }
+}

@@ -6,21 +6,39 @@ import { PrizePoolComponent } from './pages/prize-pool/prize-pool.component';
 import { UserDashboardComponent } from './pages/user-dashboard/user-dashboard.component';
 import { WinnersVerificationComponent } from './pages/winners-verification/winners-verification.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { UserLayoutComponent } from './pages/user-layout/user-layout.component';
+import { AdminLayoutComponent } from './pages/admin-layout/admin-layout.component';
+import { LoginComponent } from './pages/login/login.component';
+import { SubscribeComponent } from './pages/subscribe/subscribe.component';
 
 const routes: Routes = [
   { path: '', component: CharityImpactComponent },
   { path: 'home', redirectTo: '', pathMatch: 'full' },
-  { path: 'dashboard', component: UserDashboardComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'subscribe', component: SubscribeComponent },
+  {
+    path: '',
+    component: UserLayoutComponent,
+    children: [
+      { path: 'dashboard', component: UserDashboardComponent },
+      { path: 'charities', component: HeroDirectoryComponent },
+      { path: 'draws', component: PrizePoolComponent }
+    ]
+  },
   { path: 'user-dashboard', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'charities', component: HeroDirectoryComponent },
   { path: 'hero-directory', redirectTo: 'charities', pathMatch: 'full' },
-  { path: 'draws', component: PrizePoolComponent },
   { path: 'prize-pool', redirectTo: 'draws', pathMatch: 'full' },
   { path: 'draw-configuration', redirectTo: 'draws', pathMatch: 'full' },
   { path: 'vanguard-draw-live', redirectTo: 'draws', pathMatch: 'full' },
-  { path: 'winners', component: WinnersVerificationComponent },
+  {
+    path: '',
+    component: AdminLayoutComponent,
+    children: [
+      { path: 'admin', component: AdminDashboardComponent },
+      { path: 'winners', component: WinnersVerificationComponent }
+    ]
+  },
   { path: 'winners-verification', redirectTo: 'winners', pathMatch: 'full' },
-  { path: 'admin', component: AdminDashboardComponent },
   { path: 'admin-dashboard', redirectTo: 'admin', pathMatch: 'full' },
   { path: '**', redirectTo: '' }
 ];

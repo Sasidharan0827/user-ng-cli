@@ -1,0 +1,71 @@
+<section class="login-shell">
+  <div class="login-panel" data-aos="fade-up">
+    <div class="login-copy">
+      <p class="eyebrow">Unified Access</p>
+      <h1 class="page-title login-title">Login for subscriber and admin portals.</h1>
+      <p class="section-copy">
+        Use the member login to enter the user dashboard, or switch to admin access for draw management and winner review.
+      </p>
+
+      <div class="segment-switch login-switch">
+        <button type="button" [class.active]="mode === 'user'" (click)="setMode('user')">User Login</button>
+        <button type="button" [class.active]="mode === 'admin'" (click)="setMode('admin')">Admin Login</button>
+      </div>
+
+      <div class="login-highlights">
+        <div class="stat-tile" data-aos="fade-up" data-aos-delay="100">
+          <div class="muted-label">User Access</div>
+          <div class="stat-tile__headline">Scores, charity, draws</div>
+        </div>
+        <div class="stat-tile" data-aos="fade-up" data-aos-delay="180">
+          <div class="muted-label">Admin Access</div>
+          <div class="stat-tile__headline">System control, winners, subscriptions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-card dashboard-card dashboard-card--lg" data-aos="fade-left">
+      <ng-container *ngIf="mode === 'user'; else adminLogin">
+        <p class="eyebrow">Subscriber Portal</p>
+        <h2 class="section-display section-display--sm">User Login</h2>
+        <form class="login-form" (ngSubmit)="login('user')">
+          <label class="field-stack">
+            <span class="muted-label">Email</span>
+            <input [(ngModel)]="userForm.email" name="userEmail" type="email" class="dashboard-input" />
+          </label>
+
+          <label class="field-stack">
+            <span class="muted-label">Password</span>
+            <input [(ngModel)]="userForm.password" name="userPassword" type="password" class="dashboard-input" />
+          </label>
+
+          <button type="submit" class="btn dashboard-btn dashboard-btn--primary w-100">Login as User</button>
+        </form>
+      </ng-container>
+
+      <ng-template #adminLogin>
+        <p class="eyebrow">Control Portal</p>
+        <h2 class="section-display section-display--sm">Admin Login</h2>
+        <form class="login-form" (ngSubmit)="login('admin')">
+          <label class="field-stack">
+            <span class="muted-label">Email</span>
+            <input [(ngModel)]="adminForm.email" name="adminEmail" type="email" class="dashboard-input" />
+          </label>
+
+          <label class="field-stack">
+            <span class="muted-label">Password</span>
+            <input [(ngModel)]="adminForm.password" name="adminPassword" type="password" class="dashboard-input" />
+          </label>
+
+          <button type="submit" class="btn dashboard-btn dashboard-btn--primary w-100">Login as Admin</button>
+        </form>
+      </ng-template>
+      <div class="sidebar-links mt-4">
+        <a routerLink="/subscribe">New user? Subscribe first</a>
+        <a routerLink="/">Public Landing</a>
+        <a routerLink="/dashboard">User Dashboard</a>
+        <a routerLink="/admin">Admin Dashboard</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,52 @@
+<div class="dashboard-shell">
+  <aside class="dashboard-sidebar" data-aos="fade-right">
+    <div>
+      <div class="layout-utility-bar">
+        <div class="brand brand--with-mark">
+          <span class="brand-mark">
+            <fa-icon [icon]="faStar"></fa-icon>
+          </span>
+          <span>Digital Heroes</span>
+        </div>
+
+        <button class="theme-toggle" type="button" (click)="toggleTheme()">
+          <fa-icon [icon]="(currentTheme$ | async) === 'light' ? faMoon : faSun"></fa-icon>
+          <span>{{ (currentTheme$ | async) === 'light' ? 'Dark mode' : 'Light mode' }}</span>
+        </button>
+      </div>
+
+      <nav class="nav flex-column dashboard-nav">
+        <a
+          *ngFor="let item of navItems"
+          class="dashboard-nav__item"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span class="dashboard-nav__icon"><fa-icon [icon]="item.icon"></fa-icon></span>
+          <span>{{ item.label }}</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-cta">
+      <div class="profile-chip">
+        <div class="avatar-circle avatar-circle--sm">VC</div>
+        <div>
+          <div class="profile-chip__title">Subscriber Access</div>
+          <div class="profile-chip__meta">{{ subscription.status }} · {{ subscription.plan }}</div>
+        </div>
+      </div>
+      <div class="sidebar-links">
+        <a *ngFor="let item of quickLinks" [routerLink]="item.route">
+          <fa-icon [icon]="item.icon"></fa-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="dashboard-main dashboard-main--layout">
+    <router-outlet></router-outlet>
+  </main>
+</div>

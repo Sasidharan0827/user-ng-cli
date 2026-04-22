@@ -1,45 +1,27 @@
-import { Component } from '@angular/core';
-
-interface WinnerSubmission {
-  name: string;
-  prize: string;
-  submittedAt: string;
-  proof: string;
-  state: 'Pending' | 'Approved' | 'Rejected' | 'Paid';
-}
+import { Component, OnInit } from '@angular/core';
+import { WinnerSubmission } from '../../models/content.model';
+import { WinnersService } from '../../service/winners.service';
 
 @Component({
   selector: 'app-winners-verification',
   templateUrl: './winners-verification.component.html',
   styleUrls: ['./winners-verification.component.scss'],
 })
-export class WinnersVerificationComponent {
-  readonly submissions: WinnerSubmission[] = [
-    {
-      name: 'Elias Vance',
-      prize: '$5,000 Major Draw',
-      submittedAt: '18 Apr 2026',
-      proof: 'Stableford screenshot uploaded',
-      state: 'Pending'
-    },
-    {
-      name: 'Janice K.',
-      prize: '$250 Charity Boost',
-      submittedAt: '16 Apr 2026',
-      proof: 'Platform score export attached',
-      state: 'Approved'
-    },
-    {
-      name: 'Rohan Mehta',
-      prize: '$1,200 4-Match Reward',
-      submittedAt: '14 Apr 2026',
-      proof: 'Awaiting upload',
-      state: 'Rejected'
-    }
-  ];
+export class WinnersVerificationComponent implements OnInit {
+  submissions: WinnerSubmission[] = [];
+
+  constructor(private readonly winnersService: WinnersService) {}
+
+  ngOnInit(): void {
+    this.winnersService.getSubmissions().subscribe((submissions) => {
+      this.submissions = submissions;
+    });
+  }
 
   setState(submission: WinnerSubmission, state: WinnerSubmission['state']): void {
-    submission.state = state;
+    this.winnersService.updateState(submission.id, state).subscribe((submissions) => {
+      this.submissions = submissions;
+    });
   }
 
   get pendingCount(): number {

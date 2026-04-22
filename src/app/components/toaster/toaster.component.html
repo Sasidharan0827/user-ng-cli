@@ -1,0 +1,18 @@
+<section class="toast-stack" aria-live="polite" aria-atomic="true">
+  <article
+    *ngFor="let toast of messages$ | async"
+    class="toast-card"
+    [class.toast-card--error]="toast.tone === 'error'"
+    [class.toast-card--success]="toast.tone === 'success'"
+  >
+    <div class="toast-card__content">
+      <p class="toast-card__eyebrow">{{ toast.tone === 'success' ? 'Mission Update' : 'Action Needed' }}</p>
+      <h3>{{ toast.title }}</h3>
+      <p>{{ toast.message }}</p>
+    </div>
+
+    <button type="button" class="toast-card__close" (click)="dismiss(toast.id)" aria-label="Dismiss notification">
+      ×
+    </button>
+  </article>
+</section>

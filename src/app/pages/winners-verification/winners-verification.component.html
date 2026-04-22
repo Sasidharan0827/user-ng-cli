@@ -1,5 +1,5 @@
-<section class="page-shell page-shell--content">
-  <header class="page-header">
+<section class="page-shell page-shell--content page-shell--embedded">
+  <header class="page-header" data-aos="fade-up">
     <div>
       <p class="eyebrow">Winner Verification</p>
       <h1 class="page-title">Proof upload review, approval workflow, and payout state tracking.</h1>
@@ -28,7 +28,7 @@
       </div>
       <div class="winner-card__actions winner-card__actions--stack">
         <button type="button" class="dashboard-btn dashboard-btn--muted" (click)="setState(submission, 'Approved')">Approve</button>
-        <button type="button" class="dashboard-btn dashboard-btn--ghost" (click)="setState(submission, 'Rejected')">Reject</button>
+      <button type="button" class="dashboard-btn dashboard-btn--ghost" (click)="setState(submission, 'Rejected')">Reject</button>
         <button type="button" class="dashboard-btn dashboard-btn--outline" (click)="setState(submission, 'Paid')">Mark Paid</button>
       </div>
     </article>

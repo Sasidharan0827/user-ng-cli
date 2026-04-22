@@ -1,64 +1,27 @@
-import { Component } from '@angular/core';
-
-interface CharityProfile {
-  name: string;
-  category: string;
-  location: string;
-  impact: string;
-  events: string[];
-  featured: boolean;
-  summary: string;
-}
+import { Component, OnInit } from '@angular/core';
+import { CharityProfile } from '../../models/content.model';
+import { ContentService } from '../../service/content.service';
 
 @Component({
   selector: 'app-hero-directory',
   templateUrl: './hero-directory.component.html',
   styleUrls: ['./hero-directory.component.scss'],
 })
-export class HeroDirectoryComponent {
+export class HeroDirectoryComponent implements OnInit {
   searchTerm = '';
   activeFilter = 'All';
 
-  readonly filters = ['All', 'Education', 'Healthcare', 'Sustainability', 'Community'];
+  filters: string[] = ['All'];
+  charities: CharityProfile[] = [];
 
-  readonly charities: CharityProfile[] = [
-    {
-      name: 'Global Literacy Front',
-      category: 'Education',
-      location: 'Bengaluru, India',
-      impact: '1,280 learners reached',
-      events: ['May Golf Day', 'Remote device drive'],
-      featured: true,
-      summary: 'Digital literacy labs, teacher support, and refurbished device distribution.'
-    },
-    {
-      name: 'Kinetic Recovery',
-      category: 'Healthcare',
-      location: 'Delhi, India',
-      impact: '860 mobility kits delivered',
-      events: ['Adaptive sports clinic', 'Rehab fundraiser'],
-      featured: true,
-      summary: 'Rehabilitation, recovery, and mobility support for trauma survivors.'
-    },
-    {
-      name: 'Verdant Initiative',
-      category: 'Sustainability',
-      location: 'Pune, India',
-      impact: '42 hectares restored',
-      events: ['Corporate tree drive', 'Community planting'],
-      featured: false,
-      summary: 'Climate resilience, watershed restoration, and green jobs creation.'
-    },
-    {
-      name: 'Harbor Community Fund',
-      category: 'Community',
-      location: 'Chennai, India',
-      impact: '315 families supported',
-      events: ['Junior clinic', 'Emergency grant round'],
-      featured: false,
-      summary: 'Emergency household support and after-school programming in coastal communities.'
-    }
-  ];
+  constructor(private readonly contentService: ContentService) {}
+
+  ngOnInit(): void {
+    this.contentService.getCharities().subscribe((charities) => {
+      this.charities = charities;
+      this.filters = ['All', ...Array.from(new Set(charities.map((charity) => charity.category)))];
+    });
+  }
 
   get filteredCharities(): CharityProfile[] {
     return this.charities.filter((charity) => {
