@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiService {
-  private readonly apiBaseUrl = 'http://localhost:3000/api';
+  private readonly apiBaseUrl = 'https://fds-assesment-node.vercel.app/';
 
   constructor(private readonly http: HttpClient) {}
 
