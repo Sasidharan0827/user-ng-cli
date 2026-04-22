@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly apiBaseUrl = 'https://fds-assesment-node.vercel.app';
+  private readonly apiBaseUrl = 'https://fds-assesment-node.vercel.app/api';
 
   constructor(private readonly http: HttpClient) {}
 
